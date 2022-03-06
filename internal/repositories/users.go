@@ -66,3 +66,30 @@ func (repository Users) Get(nameOrNick string) ([]models.User, error) {
 
 	return users, nil
 }
+
+// GetByID brings up a user in the database
+func (repository Users) GetByID(ID uint64) (models.User, error) {
+	lines, err := repository.db.Query(
+		"select id, name, nick, email, created_at from users where id = $1",
+		ID,
+	)
+	if err != nil {
+		return models.User{}, err
+	}
+	defer lines.Close()
+
+	var user models.User
+	if lines.Next() {
+		if err := lines.Scan(
+			&user.ID,
+			&user.Name,
+			&user.Nick,
+			&user.Email,
+			&user.CreatedAt,
+		); err != nil {
+			return models.User{}, err
+		}
+	}
+
+	return user, nil
+}
