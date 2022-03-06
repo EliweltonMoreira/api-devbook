@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 // CreateUser insert a user in the database
@@ -48,7 +49,23 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 // GetUsers get all users stored in the database
 func GetUsers(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Getting all users!"))
+	nameOrNick := strings.ToLower(r.URL.Query().Get("user"))
+
+	db, err := db.Connect()
+	if err != nil {
+		responses.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	repository := repositories.NewRepositoryOfUsers(db)
+	users, err := repository.Get(nameOrNick)
+	if err != nil {
+		responses.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	responses.JSON(w, http.StatusOK, users)
 }
 
 // GetUser get one user stored in the database
