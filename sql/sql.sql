@@ -1,6 +1,3 @@
-CREATE DATABASE IF NOT EXISTS devbook;
--- \c devbook (only works in psql CLI)
-
 DROP TABLE IF EXISTS users;
 
 CREATE TABLE users (
