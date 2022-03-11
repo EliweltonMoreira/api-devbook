@@ -13,6 +13,7 @@ var (
 	DBStringConnection = ""
 	APIPort            = 0
 	DBPort             = 0
+	SecretKey          []byte
 )
 
 // Load will initialize the environment variables
@@ -40,4 +41,6 @@ func Load() {
 		os.Getenv("DB_PASSWORD"),
 		os.Getenv("DB_NAME"),
 	)
+
+	SecretKey = []byte(os.Getenv("SECRET_KEY"))
 }
